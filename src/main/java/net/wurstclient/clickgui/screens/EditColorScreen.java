@@ -166,7 +166,7 @@ public final class EditColorScreen extends Screen
 	{
 		Font tr = minecraft.font;
 		
-		context.drawCenteredString(minecraft.font, colorSetting.getName(),
+		context.drawCenteredString(minecraft.font, colorSetting.getDisplayName(),
 			width / 2, 16, WurstColors.VERY_LIGHT_GRAY);
 		
 		// Draw palette

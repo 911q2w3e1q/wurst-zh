@@ -21,7 +21,8 @@
     ]
   },
   "mixins": [
-    "wurst.mixins.json"
+    "wurst.mixins.json",
+    "bedrockminer.mixins.json"
   ],
   "accessWidener": "wurst.accesswidener",
   "depends": {

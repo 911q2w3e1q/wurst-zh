@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.bunnyi116.bedrockminer.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ServerboundMovePlayerPacketMixin"
+  ],
+  "client": [
+    "ClientLevelMixin",
+    "LocalPlayerMixin",
+    "MinecraftMixin",
+    "MultiPlayerGameModeAccessor",
+    "MultiPlayerGameModeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

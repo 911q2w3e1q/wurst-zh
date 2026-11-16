@@ -18,7 +18,7 @@ public final class SettingsWindow extends Window
 {
 	public SettingsWindow(Feature feature, Window parent, int buttonY)
 	{
-		super(feature.getName() + " Settings");
+		super(getTranslatedTitle(feature));
 		
 		Stream<Setting> settings = feature.getSettings().values().stream();
 		settings.map(Setting::getComponent).forEach(this::add);
@@ -29,6 +29,17 @@ public final class SettingsWindow extends Window
 		pack();
 		
 		setInitialPosition(parent, buttonY);
+	}
+	
+	private static String getTranslatedTitle(Feature feature)
+	{
+		String name = feature.getName();
+		String translatedName = name;
+		String key = "name.wurst.hack." + name.toLowerCase();
+		String t = WurstClient.INSTANCE.translate(key);
+		if(!t.equals(key))
+			translatedName = t;
+		return translatedName + " 设置";
 	}
 	
 	private void setInitialPosition(Window parent, int buttonY)

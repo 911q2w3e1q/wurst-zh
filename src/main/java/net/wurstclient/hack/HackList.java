@@ -93,6 +93,7 @@ public final class HackList implements UpdateListener
 	public final DolphinHack dolphinHack = new DolphinHack();
 	public final ExcavatorHack excavatorHack = new ExcavatorHack();
 	public final ExtraElytraHack extraElytraHack = new ExtraElytraHack();
+	public final ElytraHoverHack elytraHoverHack = new ElytraHoverHack();
 	public final FakeFlightHack fakeFlightHack = new FakeFlightHack();
 	public final FancyChatHack fancyChatHack = new FancyChatHack();
 	public final FastBreakHack fastBreakHack = new FastBreakHack();
@@ -107,6 +108,7 @@ public final class HackList implements UpdateListener
 	public final FreecamHack freecamHack = new FreecamHack();
 	public final FullbrightHack fullbrightHack = new FullbrightHack();
 	public final GlideHack glideHack = new GlideHack();
+	public final GoToHack goToHack = new GoToHack();
 	public final HandNoClipHack handNoClipHack = new HandNoClipHack();
 	public final HeadRollHack headRollHack = new HeadRollHack();
 	public final HealthTagsHack healthTagsHack = new HealthTagsHack();
@@ -149,8 +151,18 @@ public final class HackList implements UpdateListener
 		new NoShieldOverlayHack();
 	public final NoSlowdownHack noSlowdownHack = new NoSlowdownHack();
 	public final NoVignetteHack noVignetteHack = new NoVignetteHack();
+	public final AntiChargeDodgeHack antiChargeDodgeHack =
+		new AntiChargeDodgeHack();
+	public final AutoShieldHack autoShieldHack = new AutoShieldHack();
+	public final ChickenDupeHack chickenDupeHack = new ChickenDupeHack();
+	public final MaceAttackHack maceAttackHack = new MaceAttackHack();
 	public final NoWeatherHack noWeatherHack = new NoWeatherHack();
 	public final NoWebHack noWebHack = new NoWebHack();
+	public final PistonBreakHack pistonBreakHack = new PistonBreakHack();
+	public final PushAttackersHack pushAttackersHack = new PushAttackersHack();
+	public final SpearElytraAttackHack spearElytraAttackHack =
+		new SpearElytraAttackHack();
+	public final SpearDashHack spearDashHack = new SpearDashHack();
 	public final NukerHack nukerHack = new NukerHack();
 	public final NukerLegitHack nukerLegitHack = new NukerLegitHack();
 	public final OpenWaterEspHack openWaterEspHack = new OpenWaterEspHack();
@@ -174,6 +186,7 @@ public final class HackList implements UpdateListener
 	public final SkinDerpHack skinDerpHack = new SkinDerpHack();
 	public final SneakHack sneakHack = new SneakHack();
 	public final SnowShoeHack snowShoeHack = new SnowShoeHack();
+	public final SpeedDisplayHack speedDisplayHack = new SpeedDisplayHack();
 	public final SpeedHackHack speedHackHack = new SpeedHackHack();
 	public final SpeedNukerHack speedNukerHack = new SpeedNukerHack();
 	public final SpiderHack spiderHack = new SpiderHack();

@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import net.wurstclient.clickgui.Component;
 import net.wurstclient.keybinds.PossibleKeybind;
 import net.wurstclient.util.ChatUtils;
+import net.wurstclient.util.SettingI18n;
 import net.wurstclient.util.text.WText;
 
 public abstract class Setting
@@ -32,6 +33,17 @@ public abstract class Setting
 	public final String getName()
 	{
 		return name;
+	}
+	
+	/**
+	 * Returns the localized name shown in the ClickGUI. Falls back to the
+	 * original (English) name if no Chinese translation exists. The original
+	 * name is still returned by {@link #getName()} for config keys and commands.
+	 */
+	public final String getDisplayName()
+	{
+		String translated = SettingI18n.get(name);
+		return translated != null ? translated : name;
 	}
 	
 	public final String getDescription()

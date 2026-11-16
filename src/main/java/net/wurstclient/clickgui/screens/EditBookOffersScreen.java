@@ -153,7 +153,7 @@ public final class EditBookOffersScreen extends Screen
 		listGui.render(context, mouseX, mouseY, partialTicks);
 		
 		context.drawCenteredString(minecraft.font,
-			bookOffers.getName() + " (" + bookOffers.getOffers().size() + ")",
+			bookOffers.getDisplayName() + " (" + bookOffers.getOffers().size() + ")",
 			width / 2, 12, CommonColors.WHITE);
 		
 		for(Renderable drawable : renderables)

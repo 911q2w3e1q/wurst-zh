@@ -52,7 +52,7 @@ public class WurstTranslator implements ResourceManagerReloadListener
 			Collections.unmodifiableMap(currentLangStrings);
 		
 		HashMap<String, String> englishOnlyStrings = new HashMap<>();
-		loadTranslations(manager, List.of("en_us"), englishOnlyStrings::put);
+		loadTranslations(manager, List.of("zh_cn"), englishOnlyStrings::put);
 		this.englishOnlyStrings =
 			Collections.unmodifiableMap(englishOnlyStrings);
 	}
@@ -168,16 +168,10 @@ public class WurstTranslator implements ResourceManagerReloadListener
 	
 	private ArrayList<String> getCurrentLangCodes()
 	{
-		// Weird bug: Some users have their language set to "en_US" instead of
-		// "en_us" for some reason. Last seen in 1.21.
-		String mainLangCode = Minecraft.getInstance().getLanguageManager()
-			.getSelected().toLowerCase();
-		
+		// Chinese-only build: always use zh_cn regardless of the language
+		// selected in Minecraft, since it is the only shipped translation.
 		ArrayList<String> langCodes = new ArrayList<>();
-		langCodes.add("en_us");
-		if(!"en_us".equals(mainLangCode))
-			langCodes.add(mainLangCode);
-		
+		langCodes.add("zh_cn");
 		return langCodes;
 	}
 	

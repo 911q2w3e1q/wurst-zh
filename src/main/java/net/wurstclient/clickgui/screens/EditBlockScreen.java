@@ -101,7 +101,7 @@ public final class EditBlockScreen extends Screen
 		Matrix3x2fStack matrixStack = context.pose();
 		Font tr = minecraft.font;
 		
-		context.drawCenteredString(tr, setting.getName(), width / 2, 20,
+		context.drawCenteredString(tr, setting.getDisplayName(), width / 2, 20,
 			CommonColors.WHITE);
 		
 		blockField.render(context, mouseX, mouseY, partialTicks);

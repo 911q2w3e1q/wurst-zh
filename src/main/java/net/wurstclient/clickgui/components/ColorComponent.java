@@ -85,7 +85,7 @@ public final class ColorComponent extends Component
 		RenderUtils.drawBorder2D(context, x1, y3, x2, y2, outlineColor);
 		
 		// text
-		String name = setting.getName();
+		String name = setting.getDisplayName();
 		String value = ColorUtils.toHex(setting.getColor());
 		int valueWidth = TR.width(value);
 		int txtColor = GUI.getTxtColor();
@@ -109,7 +109,7 @@ public final class ColorComponent extends Component
 	@Override
 	public int getDefaultWidth()
 	{
-		return TR.width(setting.getName() + "#FFFFFF") + 6;
+		return TR.width(setting.getDisplayName() + "#FFFFFF") + 6;
 	}
 	
 	@Override

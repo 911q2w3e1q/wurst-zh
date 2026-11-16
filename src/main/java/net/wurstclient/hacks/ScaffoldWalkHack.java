@@ -153,7 +153,11 @@ public final class ScaffoldWalkHack extends Hack implements UpdateListener
 				continue;
 			
 			// place block
-			RotationUtils.getNeededRotations(hitVec).sendPlayerLookPacket();
+			// Use RotationFaker so the placement packet and movement packets
+			// share the same server-side rotation. Sending a bare look packet
+			// here conflicts with the real rotation in movement packets and
+			// makes the server rubber-band the player back while walking.
+			WURST.getRotationFaker().faceVectorPacket(hitVec);
 			IMC.getInteractionManager().rightClickBlock(neighbor, side2,
 				hitVec);
 			MC.player.swing(InteractionHand.MAIN_HAND);
