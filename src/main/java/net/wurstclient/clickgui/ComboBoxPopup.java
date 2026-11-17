@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.wurstclient.WurstClient;
+import net.wurstclient.clickgui.components.ComboBoxComponent;
 import net.wurstclient.settings.EnumSetting;
 import net.wurstclient.util.RenderUtils;
 
@@ -91,7 +92,7 @@ public final class ComboBoxPopup<T extends Enum<T>> extends Popup
 				GUI.getBgColor(), GUI.getOpacity() * (hValue ? 1.5F : 1)));
 			
 			context.guiRenderState.up();
-			context.drawString(TR, value.toString(), x1 + 2, yi1 + 2,
+			context.drawString(TR, ComboBoxComponent.displayName(value), x1 + 2, yi1 + 2,
 				GUI.getTxtColor(), false);
 		}
 	}
