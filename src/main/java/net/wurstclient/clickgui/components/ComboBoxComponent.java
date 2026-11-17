@@ -20,6 +20,7 @@ import net.wurstclient.clickgui.ComboBoxPopup;
 import net.wurstclient.clickgui.Component;
 import net.wurstclient.settings.EnumSetting;
 import net.wurstclient.util.RenderUtils;
+import net.wurstclient.util.SettingI18n;
 
 public final class ComboBoxComponent<T extends Enum<T>> extends Component
 {
@@ -35,7 +36,7 @@ public final class ComboBoxComponent<T extends Enum<T>> extends Component
 	public ComboBoxComponent(EnumSetting<T> setting)
 	{
 		this.setting = setting;
-		popupWidth = Arrays.stream(setting.getValues()).map(T::toString)
+		popupWidth = Arrays.stream(setting.getValues()).map(ComboBoxComponent::displayName)
 			.mapToInt(s -> TR.width(s)).max().getAsInt();
 		
 		setWidth(getDefaultWidth());
@@ -125,7 +126,7 @@ public final class ComboBoxComponent<T extends Enum<T>> extends Component
 		
 		// text
 		String name = setting.getDisplayName();
-		String value = "" + setting.getSelected();
+		String value = displayName(setting.getSelected());
 		int txtColor = GUI.getTxtColor();
 		context.drawString(TR, name, x1, y1 + 2, txtColor, false);
 		context.drawString(TR, value, x4 + 2, y1 + 2, txtColor, false);
@@ -147,5 +148,13 @@ public final class ComboBoxComponent<T extends Enum<T>> extends Component
 	public int getDefaultHeight()
 	{
 		return ARROW_SIZE;
+	}
+	
+	/** 显示用名称：优先取中文映射，未映射时保持原值（如语言名）。 */
+	public static String displayName(Enum<?> value)
+	{
+		String original = value.toString();
+		String translated = SettingI18n.get(original);
+		return translated != null ? translated : original;
 	}
 }
