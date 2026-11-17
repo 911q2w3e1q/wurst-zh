@@ -380,7 +380,9 @@ public final class SettingI18n
 		Map.entry("mcMMO range bug", "mcMMO 范围漏洞"),
 		Map.entry("Link SimpleElytra", "联动简单翘翅"),
 		Map.entry("Firework boost", "烟花助推"),
-		Map.entry("Spear lunge packets", "长矛突进包"));
+		Map.entry("Spear lunge packets", "长矛突进包"),
+		Map.entry("Client speed override", "客户端速度覆盖"),
+		Map.entry("Spear speed override", "长矛速度覆盖"));
 
 	private SettingI18n()
 	{

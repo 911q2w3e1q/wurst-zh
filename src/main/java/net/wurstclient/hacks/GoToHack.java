@@ -147,6 +147,13 @@ public final class GoToHack extends Hack
 		"Spear lunge packets",
 		"description.wurst.setting.goto.spear_lunge_packets", true);
 
+	// Off by default: spear travel relies on the server-side Lunge only.
+	// Enabling this injects client-side velocity for uncapped speed, which
+	// the server does not authorize and may rubber-band back.
+	private final CheckboxSetting spearSpeedOverride = new CheckboxSetting(
+		"Spear speed override",
+		"description.wurst.setting.goto.spear_speed_override", false);
+
 	private final CheckboxSetting recoverFromPush = new CheckboxSetting(
 		"Restart if pushed/pulled",
 		"description.wurst.setting.goto.recover_from_push", true);
@@ -182,6 +189,7 @@ public final class GoToHack extends Hack
 		addSetting(fireworkBoost);
 		addSetting(autoEquipSpear);
 		addSetting(spearLungePackets);
+		addSetting(spearSpeedOverride);
 		addSetting(arrivalRadius);
 		addSetting(recoverFromPush);
 		addSetting(recoverWait);
@@ -388,9 +396,12 @@ public final class GoToHack extends Hack
 	}
 
 	/**
-	 * Spear travel mode: equip a spear and spam the Lunge use-item packet each
-	 * tick to charge toward the goal at the configured speed. Client-side
-	 * velocity is overwritten every tick, so the speed is not capped at 129.
+	 * Spear travel mode: keep a spear in the main hand and submit the Lunge
+	 * use-item packet so the server performs its own authoritative charge
+	 * toward the goal. By default no client-side velocity is injected, so the
+	 * server's cooldown, hunger and speed cap all apply and movement cannot be
+	 * rubber-banded. Spear speed override (off by default) adds uncapped
+	 * client-side velocity for servers that allow it.
 	 */
 	private void spearStep()
 	{
@@ -400,29 +411,40 @@ public final class GoToHack extends Hack
 		if(autoEquipSpear.isChecked())
 			equipSpear();
 
+		// A spear must physically be in the main hand for the server to
+		// perform a Lunge. Without one there is no movement at all.
+		if(!MC.player.getMainHandItem().is(ItemTags.SPEARS))
+			return;
+
 		Vec3 target = Vec3.atCenterOf(goal);
 		Vec3 delta = target.subtract(MC.player.position());
 
-		// Face the target via the rotation faker to avoid server snap-back.
+		// Face the target via the rotation faker to avoid server snap-back and
+		// so the server-side Lunge is directed toward the goal.
 		WURST.getRotationFaker().faceVectorPacket(target);
 
-		// Level, horizontal charge toward the goal.
-		Vec3 dir = new Vec3(delta.x, 0, delta.z);
-		if(dir.lengthSqr() > 0)
-			dir = dir.normalize();
-		else
-			dir = MC.player.getLookAngle();
-
-		double blocksPerTick = speed.getValue() / 20.0;
-		MC.player.setDeltaMovement(dir.scale(blocksPerTick));
-		MC.player.fallDistance = 0;
-		PathProcessor.releaseControls();
-
-		// Re-send the use-item packet every tick to keep Lunge charged.
+		// Submit the use-item (Lunge) input to the server. This is the only
+		// thing done in the default mode; the server owns the resulting move.
 		if(spearLungePackets.isChecked())
 			MC.getConnection().send(new ServerboundUseItemPacket(
 				InteractionHand.MAIN_HAND, MC.player.getId(), MC.player.getXRot(),
 				MC.player.getYRot()));
+
+		// Optional uncapped cheat mode (off by default): inject client-side
+		// velocity toward the goal. The server may rubber-band this back.
+		if(spearSpeedOverride.isChecked())
+		{
+			Vec3 dir = new Vec3(delta.x, 0, delta.z);
+			if(dir.lengthSqr() > 0)
+				dir = dir.normalize();
+			else
+				dir = MC.player.getLookAngle();
+
+			double blocksPerTick = speed.getValue() / 20.0;
+			MC.player.setDeltaMovement(dir.scale(blocksPerTick));
+			MC.player.fallDistance = 0;
+		}
+		PathProcessor.releaseControls();
 
 		if(recoverFromPush.isChecked())
 			checkForPush(delta);

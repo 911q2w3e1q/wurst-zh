@@ -7,11 +7,12 @@
  *
  * SpearDash Hack ("长矛突进赶路") for Wurst Client.
  *
- * Reproduces the spear Lunge charge as a fast travel tool: while holding use
- * (right click) it re-sends the use-item packet every tick (no cooldown) and
- * overrides the client-side velocity to reach a configurable speed. Because
- * the rapid movement is driven client-side, it does not consume hunger the
- * way the server-side spear Lunge does, and speed is not capped at 129 m/s.
+ * Default mode is server-authoritative: a spear must actually be held, and
+ * the movement is produced only by the server-side spear Lunge triggered by
+ * the real right-click input. No client-side velocity is injected, so the
+ * server's cooldown, hunger cost and speed limit all apply and there is no
+ * rubber-banding. An optional client-side speed override can be enabled for
+ * uncapped "cheat" dashes; even then a spear must still be held.
  */
 package net.wurstclient.hacks;
 
@@ -72,15 +73,23 @@ public final class SpearDashHack extends Hack implements UpdateListener
 		"Send lunge packets",
 		"description.wurst.setting.speardash.send_lunge_packets", true);
 
+	// Off by default: movement comes from the server-side Lunge only. Turning
+	// this on injects client-side velocity for uncapped "cheat" dashes, which
+	// the server does not authorize and may rubber-band back.
+	private final CheckboxSetting clientSpeedOverride = new CheckboxSetting(
+		"Client speed override",
+		"description.wurst.setting.speardash.client_speed_override", false);
+
 	public SpearDashHack()
 	{
 		super("SpearDash");
 		setCategory(Category.MOVEMENT);
-		addSetting(dashSpeed);
 		addSetting(triggerMode);
 		addSetting(autoEquip);
-		addSetting(horizontalOnly);
 		addSetting(sendLungePackets);
+		addSetting(clientSpeedOverride);
+		addSetting(dashSpeed);
+		addSetting(horizontalOnly);
 	}
 
 	@Override
@@ -112,6 +121,12 @@ public final class SpearDashHack extends Hack implements UpdateListener
 		if(autoEquip.isChecked())
 			equipSpear();
 
+		// A spear must physically be in the main hand. The server only
+		// performs a spear Lunge when it sees a held spear, so without one
+		// there is no movement at all - no more flying empty-handed.
+		if(!MC.player.getMainHandItem().is(ItemTags.SPEARS))
+			return;
+
 		boolean activated;
 		if(triggerMode.getSelected() == TriggerMode.ALWAYS)
 		{
@@ -120,7 +135,7 @@ public final class SpearDashHack extends Hack implements UpdateListener
 		else
 		{
 			// Read the real physical right-click, then take over the packet
-			// flow ourselves so there is no server-side lunge cooldown.
+			// flow ourselves so lunge can be driven every tick.
 			activated = IKeyMapping.get(MC.options.keyUse).isActuallyDown();
 			MC.options.keyUse.setDown(false);
 		}
@@ -128,22 +143,29 @@ public final class SpearDashHack extends Hack implements UpdateListener
 		if(!activated)
 			return;
 
-		// Direction from where the player is looking.
-		Vec3 look = MC.player.getLookAngle();
-		Vec3 dir = horizontalOnly.isChecked()
-			? new Vec3(look.x, 0, look.z).normalize()
-			: look.normalize();
-
-		// m/s -> blocks per tick (20 tps, 1 block = 1 metre).
-		double blocksPerTick = dashSpeed.getValue() / 20.0;
-		MC.player.setDeltaMovement(dir.scale(blocksPerTick));
-		MC.player.fallDistance = 0;
-
-		// Re-send the use-item packet every tick to mimic the Lunge charge.
+		// Submit the use-item (Lunge) input to the server. In the default mode
+		// this is the ONLY thing we do: the server runs its own authoritative
+		// Lunge, so cooldown, hunger and speed all apply and the movement is
+		// never rubber-banded by the server.
 		if(sendLungePackets.isChecked())
 			MC.getConnection().send(new ServerboundUseItemPacket(
 				InteractionHand.MAIN_HAND, MC.player.getId(),
 				MC.player.getXRot(), MC.player.getYRot()));
+
+		// Optional uncapped cheat mode (off by default): inject client-side
+		// velocity on top of the server Lunge. The server does not authorize
+		// this, so it may rubber-band back. Still requires a held spear.
+		if(clientSpeedOverride.isChecked())
+		{
+			Vec3 look = MC.player.getLookAngle();
+			Vec3 dir = horizontalOnly.isChecked()
+				? new Vec3(look.x, 0, look.z).normalize()
+				: look.normalize();
+
+			double blocksPerTick = dashSpeed.getValue() / 20.0;
+			MC.player.setDeltaMovement(dir.scale(blocksPerTick));
+			MC.player.fallDistance = 0;
+		}
 	}
 
 	private void equipSpear()
